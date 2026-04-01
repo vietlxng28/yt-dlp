@@ -26,8 +26,9 @@ echo 2. Tai video theo dinh dang tuy chon (Nhap so)
 echo 3. Tai chi audio
 echo 4. Tai mot doan video
 echo 5. Tai playlist
-echo 6. Mo thu muc chua video tai ve
-echo 7. Cap nhat yt-dlp
+echo 6. Tai audio tu playlist
+echo 7. Mo thu muc chua video tai ve
+echo 8. Cap nhat yt-dlp
 echo.
 echo 0. Thoat
 echo.
@@ -39,15 +40,16 @@ if "%choice%"=="2" goto custom_format
 if "%choice%"=="3" goto audio
 if "%choice%"=="4" goto clip
 if "%choice%"=="5" goto playlist
-if "%choice%"=="6" goto opendir
-if "%choice%"=="7" goto update
+if "%choice%"=="6" goto playlist_audio
+if "%choice%"=="7" goto opendir
+if "%choice%"=="8" goto update
 if "%choice%"=="0" exit
 goto menu
 
 :best
 cls
 if %HAS_FFMPEG% neq 0 (
-    echo [CANH BAO] May ban thieu FFmpeg. 
+    echo [CANH BAO] May ban thieu FFmpeg.
     echo Video tai ve se bi tach roi Hinh va Tieng.
     echo Ban co muon tiep tuc khong? (Y/N)
     set /p confirm=
@@ -104,7 +106,23 @@ cls
 echo === Tai playlist ===
 set /p url=Nhap URL playlist: 
 if "!url!"=="" goto menu
-yt-dlp -o "downloads/%%(playlist_title)s/%%(title)s.%%(ext)s" -f bestvideo+bestaudio --merge-output-format mp4 "!url!"
+yt-dlp -o "downloads/%%(playlist_title)s/%%(playlist_index)s - %%(title)s.%%(ext)s" -f bestvideo+bestaudio --merge-output-format mp4 "!url!"
+pause
+goto menu
+
+:playlist_audio
+cls
+echo === Tai audio tu playlist ===
+set /p url=Nhap URL playlist: 
+if "!url!"=="" goto menu
+
+yt-dlp ^
+  -f bestaudio ^
+  -x ^
+  --audio-format mp3 ^
+  -o "downloads/%%(playlist_title)s/%%(playlist_index)s - %%(title)s.%%(ext)s" ^
+  "!url!"
+
 pause
 goto menu
 
